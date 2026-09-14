@@ -1,0 +1,495 @@
+/* ==========================================================================
+   Project Pulse — Dashboard Stylesheet
+   Dependency-free, token-driven design system.
+   ========================================================================== */
+
+:root {
+  /* Color palette (WCAG AA checked against white/near-white surfaces) */
+  --color-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef1f8;
+  --color-border: #dde2ee;
+  --color-text: #1b2333;
+  --color-text-muted: #55607a;
+  --color-accent: #3454d1;
+  --color-accent-contrast: #ffffff;
+
+  /* Status colors — always paired with a text label, never color-only */
+  --color-status-on-track-bg: #d9f4e6;
+  --color-status-on-track-fg: #0b6e46;
+  --color-status-at-risk-bg: #fdecc8;
+  --color-status-at-risk-fg: #8a5a00;
+  --color-status-blocked-bg: #fbdada;
+  --color-status-blocked-fg: #9c1c1c;
+  --color-status-completed-bg: #e2e6fb;
+  --color-status-completed-fg: #33399b;
+  --color-status-neutral-bg: #e6e8ee;
+  --color-status-neutral-fg: #3a4152;
+
+  /* Priority colors */
+  --color-priority-low-bg: #e5f1ff;
+  --color-priority-low-fg: #1c5faa;
+  --color-priority-medium-bg: #fff3d6;
+  --color-priority-medium-fg: #8a5a00;
+  --color-priority-high-bg: #ffe3d6;
+  --color-priority-high-fg: #a1420f;
+  --color-priority-critical-bg: #ffd9de;
+  --color-priority-critical-fg: #9c1030;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* Radius + elevation */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 1px 2px rgba(21, 27, 46, 0.06), 0 1px 1px rgba(21, 27, 46, 0.04);
+  --shadow-md: 0 6px 16px rgba(21, 27, 46, 0.08), 0 2px 6px rgba(21, 27, 46, 0.06);
+  --shadow-lg: 0 16px 32px rgba(21, 27, 46, 0.12), 0 4px 10px rgba(21, 27, 46, 0.06);
+
+  /* Typography */
+  --font-family-base: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.75rem;
+  --font-size-xxl: 2.25rem;
+  --line-height-base: 1.5;
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+  --transition-base: 220ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #10131c;
+    --color-surface: #1a1f2e;
+    --color-surface-alt: #202638;
+    --color-border: #2c3348;
+    --color-text: #eef1fa;
+    --color-text-muted: #a5adc4;
+    --color-accent: #7d9bff;
+    --color-accent-contrast: #0d1120;
+
+    --color-status-on-track-bg: #0f3d2a;
+    --color-status-on-track-fg: #7fe8b8;
+    --color-status-at-risk-bg: #4a3a0c;
+    --color-status-at-risk-fg: #ffd479;
+    --color-status-blocked-bg: #4a1414;
+    --color-status-blocked-fg: #ff9d9d;
+    --color-status-completed-bg: #262c5c;
+    --color-status-completed-fg: #b7bdff;
+    --color-status-neutral-bg: #2a3040;
+    --color-status-neutral-fg: #ced3e2;
+
+    --color-priority-low-bg: #10304d;
+    --color-priority-low-fg: #9cc9ff;
+    --color-priority-medium-bg: #4a3a0c;
+    --color-priority-medium-fg: #ffd479;
+    --color-priority-high-bg: #4a230c;
+    --color-priority-high-fg: #ffb489;
+    --color-priority-critical-bg: #4a0f1e;
+    --color-priority-critical-fg: #ff9db0;
+  }
+}
+
+/* ==========================================================================
+   Reset / base
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* Visible, high-contrast focus ring for keyboard users */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.dashboard-header {
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header h1 {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.dashboard-header p,
+.dashboard-header__subtitle {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  max-width: 60ch;
+}
+
+/* ==========================================================================
+   Dashboard container
+   ========================================================================== */
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-5) var(--space-7);
+}
+
+/* ==========================================================================
+   Project grid
+   ========================================================================== */
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+  align-items: stretch;
+}
+
+@media (max-width: 480px) {
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Project card
+   ========================================================================== */
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-5);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.project-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.project-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  /* Long names wrap gracefully instead of overflowing the card */
+  overflow-wrap: anywhere;
+  /* Clamp to two lines with an ellipsis; full text available via title attr */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: calc(var(--font-size-lg) * var(--line-height-base) * 2);
+}
+
+.project-card__owner {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.project-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.project-card__summary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.project-card__activity-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  margin-top: var(--space-2);
+}
+
+.project-card__activity {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  /* Clamp long recent-activity text to 3 lines; full text via title attr */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: calc(var(--font-size-sm) * var(--line-height-base) * 3);
+}
+
+.project-card__footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+   Status badge
+   Color is always paired with a visible text label — never color-only.
+   ========================================================================== */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  min-height: 24px;
+  background: var(--color-status-neutral-bg);
+  color: var(--color-status-neutral-fg);
+}
+
+.status-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-badge--on-track {
+  background: var(--color-status-on-track-bg);
+  color: var(--color-status-on-track-fg);
+}
+
+.status-badge--at-risk {
+  background: var(--color-status-at-risk-bg);
+  color: var(--color-status-at-risk-fg);
+}
+
+.status-badge--blocked {
+  background: var(--color-status-blocked-bg);
+  color: var(--color-status-blocked-fg);
+}
+
+.status-badge--completed {
+  background: var(--color-status-completed-bg);
+  color: var(--color-status-completed-fg);
+}
+
+/* ==========================================================================
+   Priority
+   ========================================================================== */
+
+.priority {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  min-height: 24px;
+  background: var(--color-status-neutral-bg);
+  color: var(--color-status-neutral-fg);
+}
+
+.priority::before {
+  content: "Priority: ";
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.priority--low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-fg);
+}
+
+.priority--medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-fg);
+}
+
+.priority--high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-fg);
+  font-weight: 800;
+}
+
+.priority--critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-fg);
+  font-weight: 800;
+  box-shadow: 0 0 0 1px currentColor inset;
+}
+
+/* ==========================================================================
+   Progress
+   ========================================================================== */
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.progress__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.progress__track {
+  width: 100%;
+  height: 8px;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.progress__bar {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-base);
+}
+
+/* Hide the whole progress block when data is missing/invalid */
+.progress[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   Empty / error states
+   ========================================================================== */
+
+.empty-state,
+.error-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-5);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-muted);
+}
+
+.empty-state[hidden],
+.error-state[hidden] {
+  display: none;
+}
+
+.empty-state h2,
+.error-state h2 {
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+}
+
+.error-state {
+  border-color: var(--color-status-blocked-fg);
+}
+
+.error-state h2 {
+  color: var(--color-status-blocked-fg);
+}
+
+/* ==========================================================================
+   Noscript fallback
+   ========================================================================== */
+
+.noscript-banner {
+  max-width: 1200px;
+  margin: var(--space-5) auto;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-status-at-risk-bg);
+  color: var(--color-status-at-risk-fg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Motion preference
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .project-card:hover,
+  .project-card:focus-within {
+    transform: none;
+  }
+}

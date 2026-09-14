@@ -1,0 +1,56 @@
+{
+  "projects": [
+    {
+      "name": "Customer Portal Redesign and Accessibility Overhaul for Enterprise Clients",
+      "owner": "Priya Nair",
+      "status": "On Track",
+      "recentActivity": "Merged PR #142 · 2h ago",
+      "priority": "High",
+      "progress": 65,
+      "summary": "Refreshing the customer portal with WCAG AA compliant components and a new navigation shell."
+    },
+    {
+      "name": "Billing Reconciliation Service",
+      "owner": "Marcus Webb",
+      "status": "At Risk",
+      "recentActivity": "Investigating a data mismatch reported by finance during the nightly reconciliation job that runs across three regions and has been intermittently failing since last Tuesday's deploy",
+      "priority": "Critical",
+      "progress": 40
+    },
+    {
+      "name": "Internal Analytics Dashboard",
+      "owner": "Sofia Alvarez",
+      "status": "Blocked",
+      "recentActivity": "Waiting on data warehouse migration",
+      "priority": "Medium",
+      "progress": 0,
+      "summary": "Blocked until the upstream warehouse migration completes; no work can proceed on the reporting layer."
+    },
+    {
+      "name": "Mobile App v3.2 Release",
+      "owner": "Devon Chu",
+      "status": "Completed",
+      "recentActivity": "Shipped to App Store · 1d ago",
+      "priority": "Low",
+      "progress": 100,
+      "summary": "Final release includes offline mode, push notification improvements, and bug fixes."
+    },
+    {
+      "name": "API Gateway Migration",
+      "owner": "Elena Kowalski",
+      "status": "On Track",
+      "recentActivity": "Completed load testing on staging",
+      "priority": "Medium",
+      "progress": 78
+    },
+    {
+      "name": "Security Audit Remediation",
+      "owner": "Tariq Osei",
+      "status": "At Risk",
+      "recentActivity": "Patched 3 of 8 findings",
+      "priority": "High",
+      "progress": 30,
+      "summary": "Working through the external audit findings; two items require vendor coordination."
+    }
+  ]
+}

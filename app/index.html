@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Pulse</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <noscript>
+    <div class="noscript-banner">
+      Project Pulse needs JavaScript enabled to load and display project data. Please enable JavaScript and refresh the page.
+    </div>
+  </noscript>
+
+  <header class="dashboard-header">
+    <h1>Project Pulse</h1>
+    <p class="dashboard-header__subtitle">
+      A quick-glance view of what's active, who owns it, and what needs attention.
+    </p>
+  </header>
+
+  <main class="dashboard">
+    <section
+      class="project-grid"
+      id="project-grid"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label="Project cards"
+    >
+      <!-- .project-card elements are cloned from the template below and appended here by JS -->
+    </section>
+
+    <div class="empty-state" id="empty-state" hidden>
+      <h2>No projects yet</h2>
+      <p>When projects are added to <code>project-data.json</code>, they'll show up here.</p>
+    </div>
+
+    <div class="error-state" id="error-state" hidden>
+      <h2>Couldn't load project data</h2>
+      <p>
+        We had trouble reading <code>project-data.json</code>. Check the console for details,
+        or try refreshing the page.
+      </p>
+    </div>
+  </main>
+
+  <template id="project-card-template">
+    <article class="project-card">
+      <div class="project-card__header">
+        <h3 class="project-card__name" data-field="name" title=""></h3>
+        <p class="project-card__owner">
+          Owner: <span data-field="owner"></span>
+        </p>
+      </div>
+
+      <div class="project-card__meta">
+        <span class="status-badge" data-field="status-badge"></span>
+        <span class="priority" data-field="priority-badge"></span>
+      </div>
+
+      <p class="project-card__summary" data-field="summary" hidden></p>
+
+      <p class="project-card__activity-label">Recent activity</p>
+      <p class="project-card__activity" data-field="recentActivity" title=""></p>
+
+      <div class="project-card__footer">
+        <div class="progress" data-field="progress-wrapper">
+          <div class="progress__label">
+            <span>Progress</span>
+            <span data-field="progress-value">0%</span>
+          </div>
+          <div class="progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-field="progress-track">
+            <div class="progress__bar" data-field="progress-bar" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('project-grid');
+      const emptyState = document.getElementById('empty-state');
+      const errorState = document.getElementById('error-state');
+      const template = document.getElementById('project-card-template');
+
+      const STATUS_CLASS_MAP = {
+        'On Track': 'status-badge--on-track',
+        'At Risk': 'status-badge--at-risk',
+        'Blocked': 'status-badge--blocked',
+        'Completed': 'status-badge--completed'
+      };
+
+      const PRIORITY_CLASS_MAP = {
+        'Low': 'priority--low',
+        'Medium': 'priority--medium',
+        'High': 'priority--high',
+        'Critical': 'priority--critical'
+      };
+
+      function showError() {
+        grid.hidden = true;
+        emptyState.hidden = true;
+        errorState.hidden = false;
+        grid.setAttribute('aria-busy', 'false');
+      }
+
+      function showEmpty() {
+        grid.hidden = true;
+        errorState.hidden = true;
+        emptyState.hidden = false;
+        grid.setAttribute('aria-busy', 'false');
+      }
+
+      function buildCard(project) {
+        const fragment = template.content.cloneNode(true);
+        const card = fragment.querySelector('.project-card');
+
+        const name = typeof project.name === 'string' && project.name.trim() ? project.name : '—';
+        const owner = typeof project.owner === 'string' && project.owner.trim() ? project.owner : '—';
+        const recentActivity = typeof project.recentActivity === 'string' && project.recentActivity.trim()
+          ? project.recentActivity
+          : '—';
+
+        const nameEl = card.querySelector('[data-field="name"]');
+        nameEl.textContent = name;
+        nameEl.title = name;
+
+        card.querySelector('[data-field="owner"]').textContent = owner;
+
+        const activityEl = card.querySelector('[data-field="recentActivity"]');
+        activityEl.textContent = recentActivity;
+        activityEl.title = recentActivity;
+
+        // Status badge
+        const statusBadge = card.querySelector('[data-field="status-badge"]');
+        const status = project.status;
+        const statusClass = STATUS_CLASS_MAP[status];
+        if (statusClass) {
+          statusBadge.textContent = status;
+          statusBadge.classList.add(statusClass);
+        } else {
+          statusBadge.textContent = status || 'Unknown';
+          console.warn(`Project Pulse: unknown status "${status}" for project "${name}".`);
+        }
+
+        // Priority badge
+        const priorityBadge = card.querySelector('[data-field="priority-badge"]');
+        const priority = project.priority;
+        const priorityClass = PRIORITY_CLASS_MAP[priority];
+        if (priorityClass) {
+          priorityBadge.textContent = priority;
+          priorityBadge.classList.add(priorityClass);
+        } else if (priority) {
+          priorityBadge.textContent = priority;
+          console.warn(`Project Pulse: unknown priority "${priority}" for project "${name}".`);
+        } else {
+          priorityBadge.textContent = 'Unknown';
+        }
+
+        // Summary (optional)
+        const summaryEl = card.querySelector('[data-field="summary"]');
+        if (typeof project.summary === 'string' && project.summary.trim()) {
+          summaryEl.textContent = project.summary;
+          summaryEl.hidden = false;
+        } else {
+          summaryEl.hidden = true;
+        }
+
+        // Progress
+        const progressWrapper = card.querySelector('[data-field="progress-wrapper"]');
+        const progressBar = card.querySelector('[data-field="progress-bar"]');
+        const progressValue = card.querySelector('[data-field="progress-value"]');
+        const progressTrack = card.querySelector('[data-field="progress-track"]');
+
+        const rawProgress = project.progress;
+        const parsedProgress = Number(rawProgress);
+        const hasValidProgress = rawProgress !== undefined
+          && rawProgress !== null
+          && !Number.isNaN(parsedProgress);
+
+        if (!hasValidProgress) {
+          progressWrapper.hidden = true;
+        } else {
+          const clamped = Math.min(100, Math.max(0, Math.round(parsedProgress)));
+          progressBar.style.width = `${clamped}%`;
+          progressValue.textContent = `${clamped}%`;
+          progressTrack.setAttribute('aria-valuenow', String(clamped));
+          progressWrapper.hidden = false;
+        }
+
+        return fragment;
+      }
+
+      function renderProjects(projects) {
+        if (projects.length === 0) {
+          showEmpty();
+          return;
+        }
+
+        grid.hidden = false;
+        emptyState.hidden = true;
+        errorState.hidden = true;
+
+        projects.forEach((project) => {
+          try {
+            const cardFragment = buildCard(project);
+            grid.appendChild(cardFragment);
+          } catch (err) {
+            console.error('Project Pulse: failed to render a project card.', err, project);
+          }
+        });
+
+        grid.setAttribute('aria-busy', 'false');
+      }
+
+      fetch('./project-data.json')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch project-data.json: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (!data || typeof data !== 'object' || !Array.isArray(data.projects)) {
+            throw new Error('project-data.json is missing a valid "projects" array.');
+          }
+          renderProjects(data.projects);
+        })
+        .catch((err) => {
+          console.error('Project Pulse: unable to load project data.', err);
+          showError();
+        });
+    });
+  </script>
+</body>
+</html>
